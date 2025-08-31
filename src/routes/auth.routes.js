@@ -7,7 +7,7 @@ router.get('/auth',(req, res)=>{
 });
 
 // router.post('/register', )
-router.post('/login', login )
+router.post('/auth/login', login )
 
 
 

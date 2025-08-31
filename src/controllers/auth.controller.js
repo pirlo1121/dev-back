@@ -1,5 +1,5 @@
 import { comparePass, createToken } from "../helpers/helper.hash.js";
-import  {User}  from "../models/users.models.js";
+import  { User }  from "../models/users.models.js";
 
 export async function login(req, res) {
   try {
@@ -11,6 +11,7 @@ export async function login(req, res) {
     email = String(email).trim().toLowerCase();
 
     const userFound = await User.findOne({ email });
+
     if (!userFound) {
       return res.status(401).json({ ok: false, msg: "Credenciales inválidas" });
     }

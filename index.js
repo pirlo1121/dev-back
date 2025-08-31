@@ -3,6 +3,7 @@ import cors from 'cors';
 import { connectDb } from './src/config/configDb.js';
 import  dotenv  from 'dotenv';
 import routerAuth from './src/routes/auth.routes.js';
+import routerProjects from './src/routes/projects.routes.js';
 
 const app = express();
 
@@ -14,7 +15,9 @@ app.use( cors() );
 
 
 // ROUTES
-app.use('/api/auth', routerAuth)
+app.use('/api', routerAuth)
+app.use('/api', routerProjects)
+
 
 
 app.listen(3000, ()=>{
