@@ -18,7 +18,7 @@ const userSchema = new mongoose.Schema(
             match: [/^\S+@\S+\.\S+$/, 'Email inválido']
         },
         password: {
-            type: stringify,
+            type: String,
             required: [true, 'La contraseña es obligatoria'],
             minlength: [6, 'la contraseña debe tener minimo 6 caracteres']
         },
@@ -48,4 +48,4 @@ userSchema.methods.comparePassword = async function (candidatePassword) {
   return bcrypt.compare(candidatePassword, this.password);
 };
 
-export const user = mongoose.model('User', userSchema);
+export const User = mongoose.model('User', userSchema);
