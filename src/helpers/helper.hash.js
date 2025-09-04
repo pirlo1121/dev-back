@@ -28,3 +28,12 @@ export function createToken(data){
         console.log(error)
     }
 }
+
+export function verifyToken(token){
+    try {
+        return jwt.verify(token, process.env.SECRET_JWT);
+    } catch (error) {
+        console.log(error);
+        return null
+    }
+}

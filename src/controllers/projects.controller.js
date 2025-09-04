@@ -4,7 +4,7 @@ import { Projects } from "../models/projects.models.js";
 export async function getProjects(req, res) {
   try {
     const projects = await Projects.find().lean();
-    return res.status(200).json({ ok: true, projects });
+    return res.status(200).json({ ok: true, projects: projects });
   } catch (error) {
     console.error("getProjects error:", error);
     return res.status(500).json({ ok: false, msg: "Error interno" });
@@ -34,8 +34,7 @@ export async function getOneProject(req, res) {
 export async function createProject(req, res) {
   try {
     const { name, description, deploy, repository, stack } = req.body;
-    // const userId = req.authUser
-
+    const userId = req.user.id
     if (!name || !description || !repository || !stack) {
       return res
         .status(400)
@@ -45,8 +44,8 @@ export async function createProject(req, res) {
       return res.status(400).json({ ok: false, msg: "stack debe ser un array" });
     }
 
-    const data = { name, description, deploy, repository, stack };
-    // data.userId = userId
+    const data = { name, description, deploy, repository, stack, userId };
+    
 
     const project = await Projects.create(data);
 

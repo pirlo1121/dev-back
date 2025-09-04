@@ -1,4 +1,4 @@
-import mongoose, { Schema } from "mongoose"
+import mongoose, { Schema }  from "mongoose"
 
 const projectsSchema = new mongoose.Schema(
     {
@@ -8,6 +8,7 @@ const projectsSchema = new mongoose.Schema(
             trim: true
         },
         description: String,
+        image: String, // SUBIR A S3
         repository: String,
         stack:{
             type: [String],
@@ -23,3 +24,4 @@ const projectsSchema = new mongoose.Schema(
 );
 
 export const Projects = mongoose.model('Project', projectsSchema);
+
