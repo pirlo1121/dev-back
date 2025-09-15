@@ -1,5 +1,5 @@
+import { uploadToS3 } from "../middlewares/multer.js";
 import { Projects } from "../models/projects.models.js";
-
 
 export async function getProjects(req, res) {
   try {
@@ -40,12 +40,12 @@ export async function createProject(req, res) {
         .status(400)
         .json({ ok: false, msg: "Ingresa todos los campos requeridos" });
     }
-    if (!Array.isArray(stack)) {
-      return res.status(400).json({ ok: false, msg: "stack debe ser un array" });
-    }
+
+    const url = await uploadToS3(req.file);
 
     const data = { name, description, deploy, repository, stack, userId };
     
+    data.image = url
 
     const project = await Projects.create(data);
 
