@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 
-const url = process.env.MONGO_URI || 'mongodb://localhost:27017/portfolio';
+const url = process.env.MONGO_URI;
 
 export async function connectDb() {
   try {
