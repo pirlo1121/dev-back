@@ -4,6 +4,7 @@ import { connectDb } from './src/config/configDb.js';
 import  dotenv  from 'dotenv';
 import routerAuth from './src/routes/auth.routes.js';
 import routerProjects from './src/routes/projects.routes.js';
+import routerContact from './src/routes/contatc.routes.js';
 
 const app = express();
 
@@ -17,6 +18,8 @@ app.use( cors() );
 // ROUTES
 app.use('/api', routerAuth)
 app.use('/api', routerProjects)
+app.use('/api', routerContact)
+
 
 
 
