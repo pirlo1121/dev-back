@@ -37,3 +37,46 @@ export async function login(req, res) {
     return res.status(500).json({ ok: false, msg: "Error interno" });
   }
 }
+
+export async function getUser(req,res) {
+
+ try {
+    const { id } = req.params;
+    const user = await User.findById(id).select("-password");
+
+    if (!user) {
+      return res.status(404).json({ message: "Usuario no encontrado" });
+    }
+
+    return res.status(200).json({ok: true, user})
+  } catch (error) {
+    console.error(" Error al obtener usuario:", error);
+    res.status(500).json({ message: "Error del servidor" });
+  }
+  
+}
+
+export const updateUser = async (req, res) => {
+  try {
+    const { id } = req.params;  
+    const updateData = { ...req.body };
+
+    if (updateData.password) {
+      return res.status(400).json({ message: "No puedes actualizar la contraseña desde este endpoint" });
+    }
+
+    const user = await User.findByIdAndUpdate(id, updateData, {
+      new: true, 
+      runValidators: true 
+    }).select("-password"); 
+
+    if (!user) {
+      return res.status(404).json({ message: "Usuario no encontrado" });
+    }
+
+    res.json(user);
+  } catch (error) {
+    console.error("Error al actualizar usuario:", error);
+    res.status(500).json({ message: "Error en el servidor" });
+  }
+};

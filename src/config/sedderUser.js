@@ -4,12 +4,22 @@ import { connectDb } from "./configDb.js";
 import dotenv from 'dotenv';
 dotenv.config({ quiet: true });
 
-    const data = {
-        name: process.env.NAME,
-        email: process.env.EMAIL,
-        password: process.env.PASSWORD,
-        role: process.env.ROLE
-    }
+const data = {
+  name: process.env.NAME,
+  email: process.env.EMAIL,
+  password: process.env.PASSWORD,
+  role: process.env.ROLE,
+  age: process.env.AGE ? parseInt(process.env.AGE) : undefined,
+  profession: process.env.PROFESSION,
+  languages: process.env.LANGUAGES ? process.env.LANGUAGES.split(",") : [],
+  skills: process.env.SKILLS ? process.env.SKILLS.split(",") : [],
+  bio: process.env.BIO,
+  avatar: process.env.AVATAR,
+  socialLinks: {
+    github: process.env.GITHUB,
+    linkedin: process.env.LINKEDIN
+  }
+};
     console.log('dataaa: ', data)
 
 export async function seedUser() {
