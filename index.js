@@ -5,20 +5,27 @@ import  dotenv  from 'dotenv';
 import routerAuth from './src/routes/auth.routes.js';
 import routerProjects from './src/routes/projects.routes.js';
 import routerContact from './src/routes/contatc.routes.js';
-
+import { errorHandler, notFoundHandler } from './src/middlewares/errorHandler.js';
+import { cleanAll } from './src/middlewares/cleanAll.js';
 const app = express();
 
 dotenv.config({quiet: true});
 connectDb();
-// await seedUser();
 app.use( express.json() );
 app.use( cors() );
 
+// clena routes
+app.use(cleanAll)
 
 // ROUTES
 app.use('/api', routerAuth)
 app.use('/api', routerProjects)
 app.use('/api', routerContact)
+
+// Error Handlers
+
+app.use(notFoundHandler);
+app.use(errorHandler)
 
 
 

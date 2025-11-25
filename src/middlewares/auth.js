@@ -1,19 +1,28 @@
-import { verifyToken } from "../helpers/helper.hash.js"
+// src/middlewares/auth.js
+import { verifyToken } from "../helpers/helper.hash.js";
+import { UnauthorizedError, ForbiddenError } from '../errors/customErrors.js';
 
+export function auth(req, res, next) {
+  const token = req.headers["authorization"]?.split(" ")[1];
+  
+  if (!token) {
+    throw new ForbiddenError("Token requerido");
+  }
 
+  const decode = verifyToken(token);
+  
+  if (!decode) {
+    throw new UnauthorizedError("Token inválido o expirado");
+  }
 
-export function auth(req,res,next){
-    const token = req.headers["authorization"]?.split(" ")[1]
-    if( !token ) return res.status(403).json({ok: false, msg: "TOKEN REQUERIDO"})
+  req.user = decode;
+  next();
+}
 
-    try {
-        const decode = verifyToken(token);
-        if(!decode) return res.status(401).json({ok:false, msg: "TOKEN INVALIDO"})
-
-        req.user = decode
-        next();
-    } catch (error) {
-        console.log(error);
-        return res.status(500).json({ok: false, msg: "ERROR DE AUTENTICAIÓN"})
-    }
+// Middleware adicional para verificar rol de admin
+export function isAdmin(req, res, next) {
+  if (req.user.role !== 'admin') {
+    throw new ForbiddenError("Acceso denegado: se requiere rol de administrador");
+  }
+  next();
 }
