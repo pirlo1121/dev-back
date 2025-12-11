@@ -3,14 +3,14 @@ import { verifyToken } from "../helpers/helper.hash.js";
 import { UnauthorizedError, ForbiddenError } from '../errors/customErrors.js';
 
 export function auth(req, res, next) {
-  const token = req.headers["authorization"]?.split(" ")[1];
-  
+  const token = req.cookies.token;
+
   if (!token) {
     throw new ForbiddenError("Token requerido");
   }
 
   const decode = verifyToken(token);
-  
+
   if (!decode) {
     throw new UnauthorizedError("Token inválido o expirado");
   }

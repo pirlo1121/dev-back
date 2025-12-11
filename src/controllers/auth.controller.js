@@ -1,16 +1,16 @@
 // src/controllers/auth.controller.js
 import { comparePass, createToken } from "../helpers/helper.hash.js";
 import { User } from "../models/users.models.js";
-import { 
-  BadRequestError, 
-  UnauthorizedError, 
-  NotFoundError 
+import {
+  BadRequestError,
+  UnauthorizedError,
+  NotFoundError
 } from '../errors/customErrors.js';
 import { asyncHandler } from '../middlewares/errorHandler.js';
 
 export const login = asyncHandler(async (req, res) => {
   let { email, password } = req.body ?? {};
-  
+
   if (!email || !password) {
     throw new BadRequestError("Ingresa correo y contraseña");
   }
@@ -35,8 +35,20 @@ export const login = asyncHandler(async (req, res) => {
 
   const { password: _omit, ...publicUser } = userFound.toObject();
 
-  return res.status(200).json({ ok: true, user: publicUser, token });
+  res.cookie('token', token, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'strict',
+    maxAge: 24 * 60 * 60 * 1000 // 1 day
+  });
+
+  return res.status(200).json({ ok: true, user: publicUser });
 });
+
+export const logout = (req, res) => {
+  res.clearCookie('token');
+  return res.status(200).json({ ok: true, message: 'Logged out successfully' });
+};
 
 export const getUser = asyncHandler(async (req, res) => {
   const { id } = req.params;

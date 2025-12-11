@@ -54,7 +54,7 @@ export const sendEmail = asyncHandler(async (req, res) => {
     await transporter.sendMail({
       from: `"Portafolio Web" <${process.env.CONTACT_EMAIL_SEND}>`,
       to: process.env.CONTACT_EMAIL_ME,
-      replyTo: email, 
+      replyTo: email,
       subject: `📧 Nuevo mensaje de ${name}`,
       text: `
 Nuevo contacto desde tu portafolio
@@ -84,19 +84,19 @@ ${message}
       `,
     });
 
-    res.status(200).json({ 
-      ok: true, 
-      msg: "Mensaje enviado correctamente" 
+    res.status(200).json({
+      ok: true,
+      msg: "Mensaje enviado correctamente"
     });
 
   } catch (error) {
     console.error("Error de Nodemailer:", error);
-    
+
     // Errores específicos de nodemailer
     if (error.code === 'EAUTH') {
       throw new InternalServerError("Error de autenticación del servidor de correo");
     }
-    
+
     if (error.code === 'ECONNECTION') {
       throw new InternalServerError("No se pudo conectar al servidor de correo");
     }
