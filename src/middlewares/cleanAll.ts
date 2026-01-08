@@ -1,7 +1,8 @@
 import sanitizeHtml from 'sanitize-html';
+import { Request, Response, NextFunction } from 'express';
 
-export const cleanAll = (req, res, next) => {
-  const deepClean = (data) => {
+export const cleanAll = (req: Request, res: Response, next: NextFunction) => {
+  const deepClean = (data: any): any => {
     if (typeof data === 'string') {
       return sanitizeHtml(data.trim());
     }
@@ -11,7 +12,7 @@ export const cleanAll = (req, res, next) => {
     }
 
     if (data && typeof data === 'object') {
-      const cleaned = {};
+      const cleaned: any = {};
       for (const key in data) {
         cleaned[key] = deepClean(data[key]);
       }

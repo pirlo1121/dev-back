@@ -1,6 +1,6 @@
 // seedUser.js
-import { User } from "../models/users.models.js";
-import { connectDb } from "./configDb.js";
+import { User } from "../models/users.models";
+import { connectDb } from "./configDb";
 import dotenv from 'dotenv';
 dotenv.config({ quiet: true });
 
@@ -20,15 +20,19 @@ const data = {
     linkedin: process.env.LINKEDIN
   }
 };
-    console.log('dataaa: ', data)
+console.log('dataaa: ', data)
 
-export async function seedUser() {
+export async function seedUser(): Promise<void> {
 
   try {
     await connectDb();
 
     const count = await User.countDocuments();
     if (count === 0) {
+      if (!data.name || !data.email || !data.password || !data.age) {
+        console.error("Missing required environment variables for seeding user");
+        process.exit(1);
+      }
       const newUser = new User(data);
       await newUser.save();
       console.log(" Usuario admin creado");
@@ -36,10 +40,13 @@ export async function seedUser() {
       console.log(" Ya existe al menos un usuario, no se creó ninguno");
     }
 
-    process.exit(); 
+    process.exit();
   } catch (err) {
     console.error(" Error al crear usuario:", err);
     process.exit(1);
   }
 }
-await seedUser()
+
+(async () => {
+  await seedUser();
+})();

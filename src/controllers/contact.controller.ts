@@ -1,18 +1,19 @@
 // src/controllers/contact.controller.js
 import nodemailer from "nodemailer";
 import { configDotenv } from "dotenv";
-import { BadRequestError, InternalServerError } from "../errors/customErrors.js";
-import { asyncHandler } from "../middlewares/errorHandler.js";
+import { BadRequestError, InternalServerError } from "../errors/customErrors";
+import { asyncHandler } from "../middlewares/errorHandler";
+import { Request, Response } from 'express';
 
 configDotenv();
 
 // Validación de email simple
-const isValidEmail = (email) => {
+const isValidEmail = (email: string) => {
   const regex = /^\S+@\S+\.\S+$/;
   return regex.test(email);
 };
 
-export const sendEmail = asyncHandler(async (req, res) => {
+export const sendEmail = asyncHandler(async (req: Request, res: Response) => {
   const { name, email, message } = req.body;
 
   // Validaciones
@@ -89,7 +90,7 @@ ${message}
       msg: "Mensaje enviado correctamente"
     });
 
-  } catch (error) {
+  } catch (error: any) {
     console.error("Error de Nodemailer:", error);
 
     // Errores específicos de nodemailer

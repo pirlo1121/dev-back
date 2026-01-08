@@ -1,20 +1,22 @@
 // src/controllers/projects.controller.js
 import mongoose from 'mongoose';
-import { uploadToS3 } from "../middlewares/multer.js";
-import { Projects } from "../models/projects.models.js";
-import { 
-  BadRequestError, 
+import { uploadToS3 } from "../middlewares/multer";
+import { Projects } from "../models/projects.models";
+import {
+  BadRequestError,
   NotFoundError,
-  ConflictError 
-} from '../errors/customErrors.js';
-import { asyncHandler } from '../middlewares/errorHandler.js';
+  ConflictError
+} from '../errors/customErrors';
+import { asyncHandler } from '../middlewares/errorHandler';
+import { Request, Response } from 'express';
+import { AuthRequest } from '../middlewares/auth';
 
-export const getProjects = asyncHandler(async (req, res) => {
+export const getProjects = asyncHandler(async (req: Request, res: Response) => {
   const projects = await Projects.find().lean();
   return res.status(200).json({ ok: true, projects });
 });
 
-export const getOneProject = asyncHandler(async (req, res) => {
+export const getOneProject = asyncHandler(async (req: Request, res: Response) => {
   const { id } = req.params;
 
   if (!mongoose.isValidObjectId(id)) {
@@ -22,7 +24,7 @@ export const getOneProject = asyncHandler(async (req, res) => {
   }
 
   const project = await Projects.findById(id).lean();
-  
+
   if (!project) {
     throw new NotFoundError("Proyecto no encontrado");
   }
@@ -30,9 +32,9 @@ export const getOneProject = asyncHandler(async (req, res) => {
   return res.status(200).json({ ok: true, project });
 });
 
-export const createProject = asyncHandler(async (req, res) => {
+export const createProject = asyncHandler(async (req: AuthRequest, res: Response) => {
   const { name, description, deploy, repository, stack } = req.body;
-  const userId = req.user.id;
+  const userId = (req.user as any)?.id; // Assuming user is decoded token with id
 
   if (!name || !description || !repository || !stack) {
     throw new BadRequestError("Ingresa todos los campos requeridos");
@@ -44,14 +46,14 @@ export const createProject = asyncHandler(async (req, res) => {
 
   const url = await uploadToS3(req.file);
 
-  const data = { 
-    name, 
-    description, 
-    deploy, 
-    repository, 
-    stack, 
+  const data = {
+    name,
+    description,
+    deploy,
+    repository,
+    stack,
     userId,
-    image: url 
+    image: url
   };
 
   const project = await Projects.create(data);
@@ -59,7 +61,7 @@ export const createProject = asyncHandler(async (req, res) => {
   return res.status(201).json({ ok: true, project });
 });
 
-export const updateProject = asyncHandler(async (req, res) => {
+export const updateProject = asyncHandler(async (req: Request, res: Response) => {
   const { id } = req.params;
 
   if (!mongoose.isValidObjectId(id)) {
@@ -92,7 +94,7 @@ export const updateProject = asyncHandler(async (req, res) => {
   return res.status(200).json({ ok: true, project });
 });
 
-export const deleteProject = asyncHandler(async (req, res) => {
+export const deleteProject = asyncHandler(async (req: Request, res: Response) => {
   const { id } = req.params;
 
   if (!mongoose.isValidObjectId(id)) {

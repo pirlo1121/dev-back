@@ -1,27 +1,28 @@
 // src/middlewares/multer.js
-import multer from 'multer';
+import multer, { FileFilterCallback } from 'multer';
 import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
 import dotenv from 'dotenv';
-import { InternalServerError } from '../errors/customErrors.js';
+import { InternalServerError } from '../errors/customErrors';
+import { Request } from 'express';
 
 dotenv.config();
 
 export const s3 = new S3Client({
-  region: process.env.AWS_REGION,
+  region: process.env.AWS_REGION as string,
   credentials: {
-    accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+    accessKeyId: process.env.AWS_ACCESS_KEY_ID as string,
+    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY as string,
   },
 });
 
-export const upload = multer({ 
+export const upload = multer({
   storage: multer.memoryStorage(),
   limits: {
     fileSize: 5 * 1024 * 1024 // 5MB
   },
-  fileFilter: (req, file, cb) => {
+  fileFilter: (req: Request, file: Express.Multer.File, cb: FileFilterCallback) => {
     const allowedMimes = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
-    
+
     if (allowedMimes.includes(file.mimetype)) {
       cb(null, true);
     } else {
@@ -30,7 +31,7 @@ export const upload = multer({
   }
 });
 
-export const uploadToS3 = async (file) => {
+export const uploadToS3 = async (file: Express.Multer.File): Promise<string> => {
   try {
     const key = `${Date.now()}-${file.originalname}`;
 

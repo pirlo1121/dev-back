@@ -2,11 +2,15 @@ import mongoose from 'mongoose';
 import { configDotenv } from 'dotenv';
 configDotenv();
 
-const url = process.env.MONGO_URI;
+const urlString = process.env.MONGO_URI;
 
-export async function connectDb() {
+export async function connectDb(): Promise<void> {
+  if (!urlString) {
+    console.error('MONGO_URI is not defined in environment variables');
+    process.exit(1);
+  }
   try {
-    await mongoose.connect(url);
+    await mongoose.connect(urlString);
 
     console.log('Connect DB');
 
@@ -15,7 +19,7 @@ export async function connectDb() {
       console.log(' Mongoose está conectado');
     });
 
-    mongoose.connection.on('error', (err) => {
+    mongoose.connection.on('error', (err: any) => {
       console.error(' Error en la conexión a MongoDB:', err);
     });
 
@@ -29,7 +33,7 @@ export async function connectDb() {
       process.exit(0);
     });
 
-  } catch (error) {
+  } catch (error: any) {
     console.error(' No se pudo conectar a MongoDB:', error.message);
     process.exit(1); // KIll
   }

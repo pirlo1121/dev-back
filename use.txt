@@ -1,0 +1,91 @@
+API Documentation
+
+Base URL: http://localhost:3000/api
+
+--------------------------------------------------------------------------------
+AUTH (Routes prefix: /api)
+--------------------------------------------------------------------------------
+
+1. Health Check
+   GET /auth
+   Response: "app running good!"
+
+2. Login
+   POST /auth/login
+   Headers: Content-Type: application/json
+   Body:
+   {
+     "email": "admin@gmail.com",
+     "password": "password123"
+   }
+
+3. Logout
+   POST /auth/logout
+   Response: Clears cookie.
+
+4. Get User (Protected)
+   GET /get/:id
+   Headers: Cookie: token=... (handled by browser/client automatically if logged in)
+
+5. Update User (Protected)
+   PUT /update/:id
+   Headers: Content-Type: application/json
+   Body:
+   {
+     "name": "New Name",
+     "bio": "New Bio Content",
+     "profession": "Senior Developer",
+     "skills": ["React", "Node.js", "TypeScript"],
+     "socialLinks": {
+       "github": "https://github.com/new",
+       "linkedin": "https://linkedin.com/in/new"
+     }
+   }
+   Note: Password cannot be updated here.
+
+--------------------------------------------------------------------------------
+CONTACT (Routes prefix: /api)
+--------------------------------------------------------------------------------
+
+1. Send Contact Email
+   POST /contact
+   Headers: Content-Type: application/json
+   Body:
+   {
+     "name": "Jane User",
+     "email": "jane@example.com",
+     "message": "Hello, I am interested in your services. This message must be at least 10 characters long."
+   }
+
+--------------------------------------------------------------------------------
+PROJECTS (Routes prefix: /api)
+--------------------------------------------------------------------------------
+
+1. Get All Projects
+   GET /projects
+
+2. Get Single Project
+   GET /projects/:id
+
+3. Create Project (Protected)
+   POST /projects
+   Headers: Content-Type: multipart/form-data
+   Body (FormData):
+   - name: "My Awesome Project"
+   - description: "Description of the project"
+   - repository: "https://github.com/user/repo"
+   - deploy: "https://my-project.com"
+   - stack: ["React", "Express", "MongoDB"]  <-- Sent as array strings
+   - image: [File upload]
+
+4. Update Project
+   PATCH /projects/:id
+   Headers: Content-Type: application/json
+   Body:
+   {
+     "name": "Updated Project Name",
+     "description": "Updated description"
+   }
+
+5. Delete Project
+   DELETE /projects/:id

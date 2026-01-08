@@ -1,3 +1,4 @@
+import { ErrorRequestHandler, Request, Response, NextFunction } from 'express';
 // import { AppError } from "../errors/customErrors";
 
 // AppError
@@ -5,7 +6,7 @@
 
 //  * Middleware principal para manejo de errores
 
-export const errorHandler = (err, req, res, next) => {
+export const errorHandler: ErrorRequestHandler = (err: any, req: Request, res: Response, next: NextFunction) => {
   if (res.headersSent) {
     return next(err);
   }
@@ -20,75 +21,83 @@ export const errorHandler = (err, req, res, next) => {
   });
 
   if (err.isOperational) {
-    return res.status(err.statusCode).json({
+    res.status(err.statusCode).json({
       ok: false,
       msg: err.message,
-      ...(err.errors && { errors: err.errors }) 
+      ...(err.errors && { errors: err.errors })
     });
+    return;
   }
 
   if (err.name === 'ValidationError') {
-    return res.status(422).json({
+    res.status(422).json({
       ok: false,
       msg: 'Error de validación',
-      errors: Object.values(err.errors).map(e => ({
+      errors: Object.values(err.errors).map((e: any) => ({
         field: e.path,
         message: e.message
       }))
     });
+    return;
   }
 
   if (err.name === 'CastError') {
-    return res.status(400).json({
+    res.status(400).json({
       ok: false,
       msg: `ID inválido: ${err.value}`
     });
+    return;
   }
 
   // Error de duplicado en MongoDB (E11000)
   if (err.code === 11000) {
     const field = Object.keys(err.keyPattern)[0];
-    return res.status(409).json({
+    res.status(409).json({
       ok: false,
       msg: `El ${field} ya existe`
     });
+    return;
   }
 
   // Errores de JWT
   if (err.name === 'JsonWebTokenError') {
-    return res.status(401).json({
+    res.status(401).json({
       ok: false,
       msg: 'Token inválido'
     });
+    return;
   }
 
   if (err.name === 'TokenExpiredError') {
-    return res.status(401).json({
+    res.status(401).json({
       ok: false,
       msg: 'Token expirado'
     });
+    return;
   }
 
   // Errores de Multer
   if (err.name === 'MulterError') {
     if (err.code === 'LIMIT_FILE_SIZE') {
-      return res.status(400).json({
+      res.status(400).json({
         ok: false,
         msg: 'El archivo es demasiado grande'
       });
+      return;
     }
-    return res.status(400).json({
+    res.status(400).json({
       ok: false,
       msg: `Error al subir archivo: ${err.message}`
     });
+    return;
   }
 
   const isProduction = process.env.NODE_ENV === 'production';
-  
-  return res.status(500).json({
+
+  res.status(500).json({
     ok: false,
-    msg: isProduction 
-      ? 'Error interno del servidor' 
+    msg: isProduction
+      ? 'Error interno del servidor'
       : err.message,
     ...((!isProduction) && { stack: err.stack })
   });
@@ -97,7 +106,7 @@ export const errorHandler = (err, req, res, next) => {
 
 //  rutas no encontradas (404)
 
-export const notFoundHandler = (req, res, next) => {
+export const notFoundHandler = (req: Request, res: Response, next: NextFunction) => {
   res.status(404).json({
     ok: false,
     msg: `Ruta no encontrada: ${req.originalUrl}`
@@ -105,10 +114,10 @@ export const notFoundHandler = (req, res, next) => {
 };
 
 
-  // Wrapper para funciones async - captura errores automáticamente
+// Wrapper para funciones async - captura errores automáticamente
 
-export const asyncHandler = (fn) => {
-  return (req, res, next) => {
+export const asyncHandler = (fn: (req: Request, res: Response, next: NextFunction) => Promise<any>) => {
+  return (req: Request, res: Response, next: NextFunction) => {
     Promise.resolve(fn(req, res, next)).catch(next);
   };
 };

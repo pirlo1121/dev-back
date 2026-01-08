@@ -1,6 +1,16 @@
-import mongoose, { Schema }  from "mongoose"
+import mongoose, { Schema, Document } from "mongoose"
 
-const projectsSchema = new mongoose.Schema(
+export interface IProject extends Document {
+    name: string;
+    description?: string;
+    image?: string;
+    repository?: string;
+    stack: string[];
+    deploy?: string;
+    userId: mongoose.Types.ObjectId;
+}
+
+const projectsSchema = new mongoose.Schema<IProject>(
     {
         name: {
             type: String,
@@ -10,7 +20,7 @@ const projectsSchema = new mongoose.Schema(
         description: String,
         image: String, // SUBIR A S3
         repository: String,
-        stack:{
+        stack: {
             type: [String],
             required: [true, 'El stack es obligatorio']
         },
@@ -23,5 +33,5 @@ const projectsSchema = new mongoose.Schema(
     }
 );
 
-export const Projects = mongoose.model('Project', projectsSchema);
+export const Projects = mongoose.model<IProject>('Project', projectsSchema);
 

@@ -1,14 +1,15 @@
 // src/controllers/auth.controller.js
-import { comparePass, createToken } from "../helpers/helper.hash.js";
-import { User } from "../models/users.models.js";
+import { comparePass, createToken } from "../helpers/helper.hash";
+import { User } from "../models/users.models";
 import {
   BadRequestError,
   UnauthorizedError,
   NotFoundError
-} from '../errors/customErrors.js';
-import { asyncHandler } from '../middlewares/errorHandler.js';
+} from '../errors/customErrors';
+import { asyncHandler } from '../middlewares/errorHandler';
+import { Request, Response } from 'express';
 
-export const login = asyncHandler(async (req, res) => {
+export const login = asyncHandler(async (req: Request, res: Response) => {
   let { email, password } = req.body ?? {};
 
   if (!email || !password) {
@@ -22,13 +23,13 @@ export const login = asyncHandler(async (req, res) => {
     throw new UnauthorizedError("Credenciales inválidas");
   }
 
-  const passMatch = await comparePass(password, userFound.password);
+  const passMatch = await comparePass(password, userFound.password as string);
   if (!passMatch) {
     throw new UnauthorizedError("Credenciales inválidas");
   }
 
   const token = createToken({
-    id: userFound._id.toString(),
+    id: (userFound as any)._id.toString(),
     email: userFound.email,
     role: userFound.role ?? "user",
   });
@@ -45,12 +46,12 @@ export const login = asyncHandler(async (req, res) => {
   return res.status(200).json({ ok: true, user: publicUser });
 });
 
-export const logout = (req, res) => {
+export const logout = (req: Request, res: Response) => {
   res.clearCookie('token');
   return res.status(200).json({ ok: true, message: 'Logged out successfully' });
 };
 
-export const getUser = asyncHandler(async (req, res) => {
+export const getUser = asyncHandler(async (req: Request, res: Response) => {
   const { id } = req.params;
   const user = await User.findById(id).select("-password");
 
@@ -61,7 +62,7 @@ export const getUser = asyncHandler(async (req, res) => {
   return res.status(200).json({ ok: true, user });
 });
 
-export const updateUser = asyncHandler(async (req, res) => {
+export const updateUser = asyncHandler(async (req: Request, res: Response) => {
   const { id } = req.params;
   const updateData = { ...req.body };
 
