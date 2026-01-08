@@ -67,7 +67,7 @@ PROJECTS (Routes prefix: /api)
 2. Get Single Project
    GET /projects/:id
 
-3. Create Project (Protected)
+3. Create Project 
    POST /projects
    Headers: Content-Type: multipart/form-data
    Body (FormData):
