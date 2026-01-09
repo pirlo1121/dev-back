@@ -14,6 +14,7 @@ export interface IUser extends Document {
   skills: string[];
   bio?: string;
   avatar?: string;
+  image: string;
   socialLinks: {
     github?: string;
     linkedin?: string;
@@ -63,25 +64,14 @@ const userSchema = new mongoose.Schema<IUser>({
   },
   bio: { type: String, trim: true },
   avatar: { type: String, default: "" },
+  image: String, // S3
   socialLinks: {
     github: { type: String, trim: true },
     linkedin: { type: String, trim: true }
   },
 }, { timestamps: true });
 
-// userSchema.pre('save', async function (next ) {
-//   if (!this.isModified('password')) return next();
 
-//   try {
-//     if (this.password) {
-//       this.password = await hashPass(this.password);
-//     }
-//     next()
-//   } catch (error) {
-//     next(error as CallbackError)
-//   }
-
-// });
 userSchema.pre('save', async function () {
   if (!this.isModified('password')) return;
 

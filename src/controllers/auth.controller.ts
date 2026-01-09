@@ -1,4 +1,5 @@
 // src/controllers/auth.controller.js
+import { uploadToS3 } from "../middlewares/multer";
 import { comparePass, createToken } from "../helpers/helper.hash";
 import { User } from "../models/users.models";
 import {
@@ -73,6 +74,27 @@ export const updateUser = asyncHandler(async (req: Request, res: Response) => {
   }
 
   const user = await User.findByIdAndUpdate(id, updateData, {
+    new: true,
+    runValidators: true
+  }).select("-password");
+
+  if (!user) {
+    throw new NotFoundError("Usuario no encontrado");
+  }
+
+  res.json({ ok: true, user });
+});
+
+export const updateUserImage = asyncHandler(async (req: Request, res: Response) => {
+  const { id } = req.params;
+
+  if (!req.file) {
+    throw new BadRequestError("No se ha subido ninguna imagen");
+  }
+
+  const imageUrl = await uploadToS3(req.file);
+
+  const user = await User.findByIdAndUpdate(id, { image: imageUrl }, {
     new: true,
     runValidators: true
   }).select("-password");

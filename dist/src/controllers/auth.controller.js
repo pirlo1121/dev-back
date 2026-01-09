@@ -1,7 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.updateUser = exports.getUser = exports.logout = exports.login = void 0;
+exports.updateUserImage = exports.updateUser = exports.getUser = exports.logout = exports.login = void 0;
 // src/controllers/auth.controller.js
+const multer_1 = require("../middlewares/multer");
 const helper_hash_1 = require("../helpers/helper.hash");
 const users_models_1 = require("../models/users.models");
 const customErrors_1 = require("../errors/customErrors");
@@ -54,6 +55,21 @@ exports.updateUser = (0, errorHandler_1.asyncHandler)(async (req, res) => {
         throw new customErrors_1.BadRequestError("No puedes actualizar la contraseña desde este endpoint");
     }
     const user = await users_models_1.User.findByIdAndUpdate(id, updateData, {
+        new: true,
+        runValidators: true
+    }).select("-password");
+    if (!user) {
+        throw new customErrors_1.NotFoundError("Usuario no encontrado");
+    }
+    res.json({ ok: true, user });
+});
+exports.updateUserImage = (0, errorHandler_1.asyncHandler)(async (req, res) => {
+    const { id } = req.params;
+    if (!req.file) {
+        throw new customErrors_1.BadRequestError("No se ha subido ninguna imagen");
+    }
+    const imageUrl = await (0, multer_1.uploadToS3)(req.file);
+    const user = await users_models_1.User.findByIdAndUpdate(id, { image: imageUrl }, {
         new: true,
         runValidators: true
     }).select("-password");

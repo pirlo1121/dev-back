@@ -43,19 +43,12 @@ AUTH (Routes prefix: /api)
    }
    Note: Password cannot be updated here.
 
---------------------------------------------------------------------------------
-CONTACT (Routes prefix: /api)
---------------------------------------------------------------------------------
+6. Update User Image (Protected)
+   PATCH /update-image/:id
+   Headers: Content-Type: multipart/form-data
+   Body (FormData):
+   - image: [File upload]
 
-1. Send Contact Email
-   POST /contact
-   Headers: Content-Type: application/json
-   Body:
-   {
-     "name": "Jane User",
-     "email": "jane@example.com",
-     "message": "Hello, I am interested in your services. This message must be at least 10 characters long."
-   }
 
 --------------------------------------------------------------------------------
 PROJECTS (Routes prefix: /api)
@@ -89,3 +82,18 @@ PROJECTS (Routes prefix: /api)
 
 5. Delete Project
    DELETE /projects/:id
+
+
+--------------------------------------------------------------------------------
+CONTACT (Routes prefix: /api)
+--------------------------------------------------------------------------------
+
+1. Send Contact Email
+   POST /contact
+   Headers: Content-Type: application/json
+   Body:
+   {
+     "name": "Jane User",
+     "email": "jane@example.com",
+     "message": "Hello, I am interested in your services. This message must be at least 10 characters long."
+   }

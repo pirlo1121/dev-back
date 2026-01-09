@@ -49,22 +49,17 @@ const userSchema = new mongoose_1.default.Schema({
     },
     bio: { type: String, trim: true },
     avatar: { type: String, default: "" },
+    image: String, // S3
     socialLinks: {
         github: { type: String, trim: true },
         linkedin: { type: String, trim: true }
     },
 }, { timestamps: true });
-userSchema.pre('save', async function (next) {
+userSchema.pre('save', async function () {
     if (!this.isModified('password'))
-        return next();
-    try {
-        if (this.password) {
-            this.password = await (0, helper_hash_1.hashPass)(this.password);
-        }
-        next();
-    }
-    catch (error) {
-        next(error);
+        return;
+    if (this.password) {
+        this.password = await (0, helper_hash_1.hashPass)(this.password);
     }
 });
 // compare passwords
