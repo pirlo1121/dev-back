@@ -12,7 +12,7 @@ router.post('/auth/login', limiter, login)
 router.post('/auth/logout', logout)
 router.put('/update/:id', auth, upload.single('image'), updateUser)
 router.patch('/update-image/:id', auth, upload.single('image'), updateUserImage);
-router.get('/get/:id', auth, getUser)
+router.get('/get/:id', getUser)
 
 
 

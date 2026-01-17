@@ -14,10 +14,13 @@ dotenv.config({ quiet: true });
 connectDb();
 app.use(express.json());
 app.use(cookieParser());
-app.use(cors({
-    origin: 'http://localhost:4200',  // IP angular
-    credentials: true
-}));
+// app.use(cors({
+//     origin: ['http://localhost:35245','http://localhost:4200'], 
+//     credentials: true
+// }));
+app.use(cors());
+
+
 
 // clena routes
 app.use(cleanAll)

@@ -2,6 +2,28 @@ API Documentation
 
 Base URL: http://localhost:3000/api
 
+1. Get All Projects
+   GET /projects
+
+--------------------------------------------------------------------------------
+CONTACT (Routes prefix: /api)
+--------------------------------------------------------------------------------
+
+2. Send Contact Email
+   POST /contact
+   Headers: Content-Type: application/json
+   Body:
+   {
+     "name": "Jane User",
+     "email": "jane@example.com",
+     "message": "Hello, I am interested in your services. This message must be at least 10 characters long."
+   }
+
+3. Get User (Protected)
+   GET /get/:id
+   Headers: Cookie: token=... (handled by browser/client automatically if logged in)
+
+
 --------------------------------------------------------------------------------
 AUTH (Routes prefix: /api)
 --------------------------------------------------------------------------------
