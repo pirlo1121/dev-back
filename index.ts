@@ -15,12 +15,10 @@ dotenv.config({ quiet: true });
 connectDb();
 app.use(express.json());
 app.use(cookieParser());
-
 app.use(cors({
-    origin: [process.env.CLIENT1 ?? '' , process.env.CLIENT2 ?? ''], 
+    origin: [process.env.CLIENT1 ?? '' , process.env.CLIENT2 ?? ''],
     credentials: true
 }));
-app.use(cors());
 
 
 
